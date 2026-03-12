@@ -1,28 +1,30 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.Map;
+
+import java.util.Scanner;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 public class TrainConsistManagementApp {
 	/*
-	 * MAIN CLASS - UseCase10TrainManagementApp
+	 * MAIN CLASS - UseCase11TrainManagementApp
 	 *
  *
- * Use Case 10: Count total seats in Train
+ * Use Case 11: Validate TrainID and Cargo Code
  *
  * Description:
- * This class aggragates seating capacity of all bogies into a single total using Stream reduce().
+ * This class validates input formats using Regular Expressions.
  *
  * At this stage, the application:
- * - Creates a list of bogies
- * - Maps bogies to capacity
- * - Reduces values into total
- * - Displays total seat count
+ * - Accpets Train ID input
+ * - Accepts Cargo Code input
+ * - Applies regex validation
+ * - Displays validation result
  *
- * This maps classification logic using reduce().
+ * This maps format validation logic using Pattern matching.
  *
  * @author Developer
- * @version 10.0
+ * @version 11.0
  */
 
 	static class Bogie{
@@ -44,36 +46,31 @@ public class TrainConsistManagementApp {
 	}
 	
 	public static void main(String[] args) {
+		Scanner in = new Scanner(System.in);
 		
 		// Display welcome message
-		System.out.println("I====================================I");
-		System.out.println("||   Count Total Seats in a Train   ||");
-		System.out.println("I====================================I\n");
+		System.out.println("I========================================I");
+		System.out.println("||   Validate Train ID and Cargo Code   ||");
+		System.out.println("I========================================I\n");
 		
 		
-		List<Bogie> trainConsist = new ArrayList<>();
+		//List<Bogie> trainConsist = new ArrayList<>();
 		
-		// Add Bogies and Capacities into the HashMap
-		trainConsist.add(new Bogie("Sleeper",72));
-		trainConsist.add(new Bogie("AC", 64));
-		trainConsist.add(new Bogie("First class", 48));
-		trainConsist.add(new Bogie("AC", 64));
-		trainConsist.add(new Bogie("Sleeper",70));
-		trainConsist.add(new Bogie("General", 150));
-		trainConsist.add(new Bogie("AC", 60));
-		trainConsist.add(new Bogie("Sleeper",74));
-		trainConsist.add(new Bogie("First class", 50));
+		//Validation Logic
+		Pattern trainIDRegex = Pattern.compile("T-\\d{5}");
+		Pattern cargoIDRegex = Pattern.compile("C-\\d{5}");
+		
+		System.out.println("Enter Train ID: ");
+		String trainID = in.next();
+		Matcher trainMatcher = trainIDRegex.matcher(trainID);
+		
+		System.out.println("Enter Cargo ID: ");
+		String cargoId = in.next();
+		Matcher cargoMatcher = cargoIDRegex.matcher(cargoId);
 
-		System.out.println("Train info: \n");
-		for(Bogie bogie : trainConsist) {
-			System.out.println(bogie.name + " -> " + bogie.capacity);
-		}
+		System.out.println("Validation Results: \n");
+		System.out.println("Train ID valid: " + trainMatcher.matches());
+		System.out.println("Cargo ID valid: " + cargoMatcher.matches());
 		
-		int totalCapacity = trainConsist.stream()
-				.mapToInt(b -> b.capacity)
-					.sum();
-		
-		System.out.println("\nTotal Capacity: ");
-		System.out.println(totalCapacity);
 	}
 }
