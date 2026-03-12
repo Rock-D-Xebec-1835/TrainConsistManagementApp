@@ -7,29 +7,30 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /*
- * Use Case 14: Handle Invalid Boogie Capacity(Custom Exception)
+ * Use Case 15: Safe Cargo Assignment using try-catch-finally
  *
  * Description:
- * This class prevents creation of passenger bogies
- * with invalid seating capacity using a custom exception
+ * This class safely assigns cargo to goods bogies
+ * while handling unsafe combinations using structured exception
+ * handling blocks.
  *
  * At this stage, the application:
- * - Defines a custom exception
- * - Validates capacity inside constructor
- * - Throws exception if capacity <= 0
- * - Prevents invalid bogie creation
- * - Continues execution safely
+ * - Defines a custom RuntimeException
+ * - Validates cargo assignment rules
+ * - Throws exception for unsafe cargo
+ * - Catches and handles the exception
+ * - Executes finally block for logging
  *
- * This maps fail-fast validation using checked exceptions.
+ * This maps runtime safety handling using try-catch-finally
  *
  * @author Developer
- * @version 14.0
+ * @version 15.0
  */
 
 public class TrainConsistManagementApp {
 	// Custom Exception
-	static class InvalidCapacityException extends RuntimeException{
-		public InvalidCapacityException(String message) {
+	static class CargoSafetyException extends RuntimeException{
+		public CargoSafetyException(String message) {
 			super(message);
 		}
 	}
@@ -54,6 +55,7 @@ public class TrainConsistManagementApp {
 	static class GoodsBogie {
 		String type;
 		String cargo;
+		static Map<String, String> cargoMap = new HashMap<>();
 
 		GoodsBogie(String type, String cargo) {
 			this.type = type;
@@ -64,12 +66,28 @@ public class TrainConsistManagementApp {
 		public String toString() {
 			return type + " -> " + cargo;
 		}
+		
+		
 	}
 	
-	static Bogie addBogie(String type, int capacity) throws InvalidCapacityException{
-		if(capacity <= 0) throw new InvalidCapacityException("Capacity cannot be negative  or zero");
-		System.out.println("Added Bogie");
-		return new Bogie(type, capacity);
+	public static void populate(Map<String, String> cargoMap) {
+		cargoMap.put("Rectangle", "Grain");
+		cargoMap.put("Cylinder", "Petrol");
+		cargoMap.put("Open", "Coal");
+	}
+	
+	
+	static GoodsBogie addBogie(String type, String cargo) {
+
+	    String rule = GoodsBogie.cargoMap.get(type);
+
+	    if(rule == null || !rule.equals(cargo)) {
+	        throw new CargoSafetyException(
+	                "Unsafe cargo assignment: " + type + " cannot carry " + cargo
+	        );
+	    }
+
+	    return new GoodsBogie(type, cargo);
 	}
 
 	public static void main(String[] args) {
@@ -83,14 +101,23 @@ public class TrainConsistManagementApp {
 		System.out.println("==========================================\n");
 
 		
-		List<Bogie> bogies = new ArrayList<>();
+		List<GoodsBogie> bogies = new ArrayList<>();
+		populate(GoodsBogie.cargoMap);
 		
-		bogies.add(addBogie("First Class", 20));
-		bogies.add(addBogie("Sleeper Class", 100));
-		bogies.add(addBogie("First Class", 30));
-		bogies.add(addBogie("First Class", 40));
-		bogies.add(addBogie("First Class", -20));
-		
+		try {
+
+		    bogies.add(addBogie("Cylinder", "Petrol"));
+		    bogies.add(addBogie("Box", "Grain"));   // invalid
+		    bogies.add(addBogie("Open", "Coal"));
+
+		} catch (CargoSafetyException e) {
+
+		    System.out.println("ERROR: " + e.getMessage());
+
+		} finally {
+
+		    System.out.println("Cargo assignment attempt completed.");
+		}
 		
 		System.out.println("UC14 invalid bogie creation handling completed...");
 	}
