@@ -1,30 +1,32 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.Comparator;
 
 
 public class TrainConsistManagementApp {
 	/*
-	 * MAIN CLASS - UseCase7TrainManagementApp
+	 * MAIN CLASS - UseCase8TrainManagementApp
 	 *
  *
- * Use Case 7: Sort Bogies by Capacity (Comparator)
+ * Use Case 8: Filter Passenger Bogies Using Streams
  *
  * Description:
- * This class sorts passenger bogies based on seating capacity using a custom comparator
+ * This class filters passenger bogies based on seating
+ * capacities using Stram API
  *
  * At this stage, the application:
- * - Creates bogie objects
- * - Stores them in a list
- * - Displays unsorted data
- * - Sorts using comparator logic
- * - Displays sorted result
+ * - Creates a list of bogies
+ * - Converts list into stream
+ * - Apllies a filter logic
+ * - Collects filtered result
+ * - Displays qualifying size
  *
- * This maps custom ordering using Comparator
+ * This maps functional filtering using Strams
  *
  * @author Developer
- * @version 7.0
+ * @version 8.0
  */
 
 	static class Bogie{
@@ -40,16 +42,16 @@ public class TrainConsistManagementApp {
 	public static void main(String[] args) {
 		
 		// Display welcome message
-		System.out.println("I=================================================I");
-		System.out.println("||   UC7 - Sort Bogies by Capacity(Comparator)   ||");
-		System.out.println("I=================================================I\n");
+		System.out.println("I===================================================I");
+		System.out.println("||   UC8 - Filter Passenger Bogies using Streams   ||");
+		System.out.println("I===================================================I\n");
 		
 		
 		List<Bogie> trainConsist = new ArrayList<>();
 		
 		// Add Bogies and Capacities into the HashMap
 		trainConsist.add(new Bogie("Sleeper",300));
-		trainConsist.add(new Bogie("AC", 120));
+		trainConsist.add(new Bogie("AC", 80));
 		trainConsist.add(new Bogie("First class", 60));
 		trainConsist.add(new Bogie("General", 150));
 
@@ -58,17 +60,12 @@ public class TrainConsistManagementApp {
 			System.out.println(bogie.name + " -> " + bogie.capacity);
 		}
 		
-		Comparator<Bogie> capacityComparator = new Comparator<Bogie>() {
-			@Override
-			public int compare(Bogie b1, Bogie b2) {
-				return b1.capacity - b2.capacity;
-			}
-		};
+		List<Bogie> filteredBogies = trainConsist.stream()
+					.filter(b -> b.capacity > 100)
+					.collect(Collectors.toList());
 		
-		Collections.sort(trainConsist,capacityComparator);
-		
-		System.out.println("\nAfter sorting: \n");
-		for(Bogie bogie : trainConsist) {
+		System.out.println("\nFiltered Bogies: (Capacity > 100) \n");
+		for(Bogie bogie : filteredBogies) {
 			System.out.println(bogie.name + " -> " + bogie.capacity);
 		}
 
